@@ -1,55 +1,34 @@
 const EventGridClient = require('azure-eventgrid');
 const msRestAzure = require('ms-rest-azure');
-const uuid = require('uuid');
-const url = require('url');
+const publishEventsCreator = require('./publishEventsCreator');
 
-module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+module.exports = async (context, req) => {
+    if (req.query.source === 'kentico') {        
+        const topicCredentials = new msRestAzure.TopicCredentials(process.env['EVENT_DOCS_CHANGED_KEY']);
+        const EGClient = new EventGridClient(topicCredentials);
+        const publishEvents = publishEventsCreator({EGClient, host: process.env['EVENT_DOCS_CHANGED_ENDPOINT']});        
 
-    if (req.query.source !== 'kentico' && req.query.source !== 'github') {        
+        try {
+            await publishEvents(req.body, `${req.query.source}_webhook`);
+            
+            context.res = {
+                status: 200,
+                body: 'Published successfully'
+            }
+        } catch (error) {
+            context.log(error);
+            context.res = {
+                status: 500,
+                body: 'Unable to brodcast webhook'
+            };
+        }
+    }
+    else {   
         context.res = {
             status: 400,
             body: 'Unknown webhook source'
         };
-        context.done();
-
-        return;
     }
     
-    try {
-        await pushToEventGrid(req.body, `${req.query.source}_webhook`);
-        
-        context.log('Event published successfully');
-        context.res = {
-            status: 200
-        }
-    } catch (error) {
-        context.log(`And error ocurred: ${err}`);
-        context.res = {
-            status: 400,
-            body: 'Unable to brodcast webhook'
-        };
-    }
-    
-    context.done();
+    context.log(context.res.body);
 };
-
-async function pushToEventGrid(webhookBody, eventType) {
-    const topicCredentials = new msRestAzure.TopicCredentials(process.env['EVENT_DOCS_CHANGED_KEY']);
-    const EGClient = new EventGridClient(topicCredentials);
-    const docsChangedHost = url.parse(process.env['EVENT_DOCS_CHANGED_ENDPOINT'], true).host;
-    const currentDate = new Date();
-
-    let events = [
-        {
-            id: uuid.v4(),
-            subject: webhookBody.message.operation,
-            eventType: eventType,
-            dataVersion: '1.0',
-            data: webhookBody.data.items,
-            eventTime: currentDate
-        }
-    ]
-
-    return EGClient.publishEvents(docsChangedHost, events);
-}
