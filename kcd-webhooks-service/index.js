@@ -6,31 +6,35 @@ const url = require('url');
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
-    if (req.query.name && req.query.message) {
-        pushToEventGrid(req.query.name, 'test', {
-            message: req.query.message
-        });
-
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
-    }
-    else {
+    if (req.query.source !== 'kentico' && req.query.source !== 'github') {        
         context.res = {
             status: 400,
-            body: "Please pass a name on the query string or in the request body"
+            body: 'Unknown webhook source'
+        };
+        context.done();
+
+        return;
+    }
+    
+    try {
+        await pushToEventGrid(req.body, `${req.query.source}_webhook`);
+        
+        context.log('Event published successfully');
+        context.res = {
+            status: 200
+        }
+    } catch (error) {
+        context.log(`And error ocurred: ${err}`);
+        context.res = {
+            status: 400,
+            body: 'Unable to brodcast webhook'
         };
     }
+    
+    context.done();
 };
 
-/*
-data: {
-    field1: 'value1',
-    filed2: 'value2'
-}
-*/
-function pushToEventGrid(subject, eventType, data) {
+async function pushToEventGrid(webhookBody, eventType) {
     const topicCredentials = new msRestAzure.TopicCredentials(process.env['EVENT_DOCS_CHANGED_KEY']);
     const EGClient = new EventGridClient(topicCredentials);
     const docsChangedHost = url.parse(process.env['EVENT_DOCS_CHANGED_ENDPOINT'], true).host;
@@ -39,15 +43,13 @@ function pushToEventGrid(subject, eventType, data) {
     let events = [
         {
             id: uuid.v4(),
-            subject: subject,
+            subject: webhookBody.message.operation,
             eventType: eventType,
             dataVersion: '1.0',
-            data: data,
+            data: webhookBody.data.items,
             eventTime: currentDate
         }
     ]
 
-    EGClient.publishEvents(docsChangedHost, events)
-    .then(_ => Promise.resolve(console.log('Published events successfully.')))
-    .catch((err) => { console.log('An error ocurred ' + err); });
+    return EGClient.publishEvents(docsChangedHost, events);
 }
