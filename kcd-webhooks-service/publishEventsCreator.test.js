@@ -1,6 +1,6 @@
 const publishEventsCreator = require('./publishEventsCreator');
 
-const EGClient = {
+const eventGridClient = {
     publishEvents: jest.fn()
 }
 const host = 'fake.url-to-webhook.cloud';
@@ -16,13 +16,13 @@ const events =[{
 describe('publishEvents', () => {
   test('calls publishEvents with correct host and events', async () => {
     const deps = {
-        EGClient,
+        eventGridClient,
         host: fakeHost,
     };
 
     await publishEventsCreator(deps)(events);
     
-    expect(EGClient.publishEvents.mock.calls[0][0]).toBe(host);
-    expect(EGClient.publishEvents.mock.calls[0][1]).toBe(events);
+    expect(eventGridClient.publishEvents.mock.calls[0][0]).toBe(host);
+    expect(eventGridClient.publishEvents.mock.calls[0][1]).toBe(events);
   });
 });
