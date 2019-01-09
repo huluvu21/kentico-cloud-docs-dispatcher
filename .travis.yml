@@ -4,6 +4,6 @@ node_js:
   - "10"
 deploy:
   - provider: azure_web_apps
-    slot: kcd-webhook-service-staging
+    site: kcd-webhook-service-live-dev
     verbose: true
     on: master
