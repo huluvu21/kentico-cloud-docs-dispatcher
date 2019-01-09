@@ -11,7 +11,16 @@ module.exports = async (context, request) => {
         };
 
         return;
-    } 
+    }
+
+    if (request.query.source === 'kentico' && request.body.message.type === 'content_item') {          
+        context.res = {
+            status: 200,
+            body: 'Nothing published'
+        };
+
+        return;
+    }
 
     const topicCredentials = new msRestAzure.TopicCredentials(process.env['EventGrid.DocsChanged.Key']);
     const eventGridClient = new EventGridClient(topicCredentials);
@@ -22,5 +31,5 @@ module.exports = async (context, request) => {
     context.res = {
         status: 200,
         body: 'Published successfully'
-    }
+    };
 };
