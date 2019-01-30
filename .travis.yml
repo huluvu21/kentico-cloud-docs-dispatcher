@@ -5,4 +5,4 @@ node_js:
 before_install:
   - chmod +x .travis/deploy.sh
 script:
-  .travis/deploy.sh
+  npm run deploy
