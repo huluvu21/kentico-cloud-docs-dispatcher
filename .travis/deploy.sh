@@ -48,9 +48,9 @@ remove_sensitive_information() {
 
 # Only execute the following if the commit is made to the `master` or `develop` branches
 if [ "$TRAVIS_BRANCH" == "master" ]; then
-    GIT_DESTINATION = $GIT_MASTER
+    GIT_DESTINATION=$GIT_MASTER
 elif [ "$TRAVIS_BRANCH" == "develop" ]; then
-    GIT_DESTINATION = $GIT_DEVELOP
+    GIT_DESTINATION=$GIT_DEVELOP
 else
     exit 0
 fi
