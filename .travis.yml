@@ -2,12 +2,5 @@ sudo: required
 language: node_js
 node_js:
   - "10"
-deploy:
-  - provider: azure_web_apps
-    site: kcd-webhook-service-live-dev
-    verbose: true
-    on: develop
-  - provider: azure_web_apps
-    site: kcd-webhook-service-live-master
-    verbose: true
-    on: master
+script:
+  .travis/deploy.sh
