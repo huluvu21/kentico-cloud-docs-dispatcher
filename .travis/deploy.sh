@@ -32,7 +32,6 @@ update_website() {
 }
 
 remove_sensitive_information() {
-
     declare -r CENSOR_TEXT="[secure]";
 
     while IFS="" read -r line; do
@@ -42,9 +41,7 @@ remove_sensitive_information() {
         done
 
         printf "%s\n" "$line"
-
     done
-
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -69,5 +66,4 @@ main () {
     rm -rf "$TMP_DIR"
 }
 
-main "$@" \
-    &> >(remove_sensitive_information "$GH_USER_EMAIL" "$GIT_USER_NAME" "$GIT_PASSWORD")
+main "$@"
