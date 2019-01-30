@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Kentico Cloud documentation - webhooks service",
   "scripts": {
-    "test": "jest",
-    "deploy": ".travis/deploy.sh"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
