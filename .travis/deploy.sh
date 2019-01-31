@@ -27,7 +27,7 @@ update_website() {
     echo $GITHUB_COMMIT
 
     COMMIT_AUTHOR=`jq '.value.commit.author.name'`
-    echo COMMIT_AUTHOR
+    echo $COMMIT_AUTHOR
 
     {
         git config --global user.email "$GIT_USER_EMAIL" \
