@@ -23,9 +23,11 @@ update_website() {
     # Move to temp folder
     cd "$TMP_DIR"
 
-    { 
+    COMMIT_AUTHOR = curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT" | jq '.value.commit.author.name'
+
+    {
         git config --global user.email "$GIT_USER_EMAIL" \
-          && git config --global user.name "$GIT_USER_NAME" \
+          && git config --global user.name "$COMMIT_AUTHOR" \
           && git init \
           && git add -A \
           && git commit --message "$TRAVIS_COMMIT_MESSAGE" \
@@ -50,8 +52,6 @@ fi
 
 main () {
     declare -r TMP_DIR="$(mktemp -d XXXXX)"
-
-    echo "Commit: $TRAVIS_COMMIT"
 
     prepare_site_dist_dir \
         && update_website

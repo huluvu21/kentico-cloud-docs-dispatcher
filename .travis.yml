@@ -4,5 +4,6 @@ node_js:
   - "10"
 before_install:
   - chmod +rx .travis/deploy.sh
+  - sudo apt-get install jq
 script:
   .travis/deploy.sh
