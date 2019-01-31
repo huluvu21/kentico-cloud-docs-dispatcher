@@ -23,7 +23,11 @@ update_website() {
     # Move to temp folder
     cd "$TMP_DIR"
 
-    COMMIT_AUTHOR=`curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT" | jq '.value.commit.author.name'`
+    GITHUB_COMMIT=`curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT"`
+    echo $GITHUB_COMMIT
+
+    COMMIT_AUTHOR=`jq '.value.commit.author.name'`
+    echo COMMIT_AUTHOR
 
     {
         git config --global user.email "$GIT_USER_EMAIL" \
