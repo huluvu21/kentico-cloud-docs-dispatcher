@@ -70,5 +70,4 @@ main () {
     rm -rf "$TMP_DIR"
 }
 
-main "$@" \
-    &> >(remove_sensitive_information "$GIT_USER_EMAIL" "$GIT_USER_NAME" "$GIT_PASSWORD")
+main "$@"
