@@ -28,7 +28,7 @@ update_website() {
           && git config --global user.name "$GIT_USER_NAME" \
           && git init \
           && git add -A \
-          && git commit --message $TRAVIS_COMMIT_MESSAGE \
+          && git commit --message "$TRAVIS_COMMIT_MESSAGE" \
           && git push --quiet --force --set-upstream "https://$GIT_USER_NAME:$GIT_PASSWORD@$GIT_DESTINATION" master
     } || {
         exit 1
