@@ -28,33 +28,20 @@ update_website() {
           && git config --global user.name "$GIT_USER_NAME" \
           && git init \
           && git add -A \
-          && git commit --message "Hey server, this content is for you!" \
+          && git commit --message $TRAVIS_COMMIT_MESSAGE \
           && git push --quiet --force --set-upstream "https://$GIT_USER_NAME:$GIT_PASSWORD@$GIT_DESTINATION" master
     } || {
         exit 1
     }
 }
 
-remove_sensitive_information() {
-    declare -r CENSOR_TEXT="[secure]";
-
-    while IFS="" read -r line; do
-
-        for text in "$@"; do
-            line="${line//${text}/$CENSOR_TEXT}"
-        done
-
-        printf "%s\n" "$line"
-    done
-}
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Only execute the following if the commit is made to the `master` or `develop` branches
 if [ "$TRAVIS_BRANCH" == "master" ]; then
-    GIT_DESTINATION=$GIT_MASTER
+    GIT_DESTINATION=$GIT_DESTINATION_MASTER
 elif [ "$TRAVIS_BRANCH" == "develop" ]; then
-    GIT_DESTINATION=$GIT_DEVELOP
+    GIT_DESTINATION=$GIT_DESTINATION_DEVELOP
 else
     exit 0
 fi
