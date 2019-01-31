@@ -23,12 +23,16 @@ update_website() {
     # Move to temp folder
     cd "$TMP_DIR"
 
-    git config --global user.email "$GIT_USER_EMAIL" \
-        && git config --global user.name "$GIT_USER_NAME" \
-        && git init \
-        && git add -A \
-        && git commit --message "Hey server, this content is for you!" \
-        && git push --quiet --force --set-upstream "https://$GIT_USER_NAME:$GIT_PASSWORD@$GIT_DESTINATION" master
+    { 
+        git config --global user.email "$GIT_USER_EMAIL" \
+          && git config --global user.name "$GIT_USER_NAME" \
+          && git init \
+          && git add -A \
+          && git commit --message "Hey server, this content is for you!" \
+          && git push --quiet --force --set-upstream "https://$GIT_USER_NAME:$GIT_PASSWORD@$GIT_DESTINATION" master
+    } || {
+        exit 1
+    }
 }
 
 remove_sensitive_information() {
