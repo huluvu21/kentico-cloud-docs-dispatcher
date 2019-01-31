@@ -51,6 +51,8 @@ fi
 main () {
     declare -r TMP_DIR="$(mktemp -d XXXXX)"
 
+    echo "Commit: $TRAVIS_COMMIT"
+
     prepare_site_dist_dir \
         && update_website
 
