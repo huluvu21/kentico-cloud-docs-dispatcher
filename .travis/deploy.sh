@@ -23,10 +23,7 @@ update_website() {
     # Move to temp folder
     cd "$TMP_DIR"
 
-    GITHUB_COMMIT=`curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT"`
-    echo $GITHUB_COMMIT
-
-    COMMIT_AUTHOR=`$GITHUB_COMMIT | jq '.value.commit.author.name'`
+    COMMIT_AUTHOR=`curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT" | jq '.commit.author.name'`
     echo $COMMIT_AUTHOR
 
     {
