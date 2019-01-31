@@ -26,7 +26,7 @@ update_website() {
     GITHUB_COMMIT=`curl -s "https://api.github.com/repos/$TRAVIS_REPO_SLUG/commits/$TRAVIS_COMMIT"`
     echo $GITHUB_COMMIT
 
-    COMMIT_AUTHOR=`jq '.value.commit.author.name'`
+    COMMIT_AUTHOR=`$GITHUB_COMMIT | jq '.value.commit.author.name'`
     echo $COMMIT_AUTHOR
 
     {
